@@ -1,7 +1,6 @@
 #include <Geode/modify/GJBaseGameLayer.hpp>
 #include <Geode/modify/PlayLayer.hpp>
 #include <random>
-#include <iostream>
 
 using namespace geode::prelude;
 
@@ -35,6 +34,17 @@ class $modify(WSpeedBaseLayer, GJBaseGameLayer) {
 
         // credit to the cool ass python script that made this (i just edited the GlobalSounds one a lil)
         switch(event) {
+            // Events that aren't picked up by gameEventTrigger
+            case -1: // yellow gravity portal
+                data.color = ccColor3B({ 255, 255, 0 });
+                data.text = "*CHANGES GRAVITY*";
+                break;
+            case -2: // blue gravity portal
+                data.color = ccColor3B({ 0, 166, 255 });
+                data.text = "*CHANGES GRAVITY*";
+                break;
+
+            // Events that are picked up by gameEventTrigger
             case 23:
                 data.color = ccColor3B({0, 255, 0});
                 data.text = "*DASHES*";
@@ -204,6 +214,19 @@ class $modify(WSpeedBaseLayer, GJBaseGameLayer) {
 
         int eventAsInt = static_cast<int>(p0);
         spawnText(eventAsInt);
+    }
+
+    void flipGravity(PlayerObject* object, bool flip, bool noEffects) {
+        GJBaseGameLayer::flipGravity(object, flip, noEffects);
+
+        if (!Mod::get()->getSettingValue<bool>("enable-wspeed-texts")) return;
+
+        if (flip) {
+            spawnText(-1);
+        }
+        else {
+            spawnText(-2);
+        }
     }
 };
 
